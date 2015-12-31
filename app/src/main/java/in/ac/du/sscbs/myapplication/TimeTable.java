@@ -1,5 +1,6 @@
 package in.ac.du.sscbs.myapplication;
 
+import android.graphics.Bitmap;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,9 +15,13 @@ import android.webkit.WebViewClient;
 public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
 
+
     ConnectionDetector connectionDetector;
     SwipeRefreshLayout mSwipeRefreshLayout;
     ErrorDialogMessage errorDialogMessage;
+    boolean loadingFinished = true;
+    boolean redirect = false;
+    Progress progress;
 
     public WebView Wv;
     final  String url = "http://collegeprojects.net.in/att_sscbs/main/Student/index.php";
@@ -25,7 +30,7 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_table);
 
-
+        progress = new Progress(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("Time Table");
         setSupportActionBar(toolbar);
@@ -35,7 +40,6 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
         Wv = (WebView) findViewById(R.id.wv_timetable);
         WebSettings WebSettings = Wv.getSettings();
         WebSettings.setJavaScriptEnabled(true);
-        Wv.setWebViewClient(new WebViewClient());
 
         connectionDetector = new ConnectionDetector(this);
         errorDialogMessage = new ErrorDialogMessage(this);
@@ -50,7 +54,45 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
 
+
+
+        Wv.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String urlNewString) {
+                if (!loadingFinished) {
+                    redirect = true;
+                }
+
+                loadingFinished = false;
+                view.loadUrl(urlNewString);
+                return true;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap facIcon) {
+                loadingFinished = false;
+                progress.show();
+                 }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                if (!redirect) {
+                    loadingFinished = true;
+                }
+
+                if (loadingFinished && !redirect) {
+
+                    progress.stop();
+
+                   } else {
+                    redirect = false;
+                }
+
+            }
+        });
         Wv.loadUrl(url);
+
 
     }
 

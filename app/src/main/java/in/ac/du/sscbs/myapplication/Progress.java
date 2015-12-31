@@ -11,22 +11,38 @@ public class Progress {
 
     ProgressDialog Dialog;
     Context context;
+    boolean ifstarted;
 
     Progress(Context c){
-        context = c;
+
+            ifstarted = false;
+            context = c;
     }
 
     void show(){
+
+        if(!ifstarted){
+
 
         Dialog = new ProgressDialog(context);
         Dialog.setTitle("Fetching Data");
         Dialog.setMessage("Please Wait.....");
         Dialog.setCancelable(true);
         Dialog.show();
+        ifstarted = true;
+        }
+
     }
 
     void stop(){
 
-        Dialog.cancel();
+        if(ifstarted) {
+
+            Dialog.cancel();
+        }
+
+
+        ifstarted = false;
+
     }
 }
