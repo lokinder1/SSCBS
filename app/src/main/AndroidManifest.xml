@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="in.ac.du.sscbs.myapplication">
 
-
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".MyApplication"
@@ -29,6 +29,26 @@
                 android:value="in.ac.du.sscbs.myapplication.MainActivity" />
         </activity>
         <activity android:name=".Notices">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.ac.du.sscbs.myapplication.MainActivity" />
+        </activity>
+        <activity android:name=".Attendance">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.ac.du.sscbs.myapplication.MainActivity" />
+
+        </activity>
+
+        <activity android:name=".InternalMarks">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.ac.du.sscbs.myapplication.MainActivity" />
+
+
+        </activity>
+        <activity android:name=".TimeTable">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

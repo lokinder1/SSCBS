@@ -1,11 +1,11 @@
 package in.ac.du.sscbs.myapplication;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -31,6 +32,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -42,8 +44,10 @@ import java.util.Stack;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemClickListener {
 
-    /*News Activity*/
 
+    /*News Activity*/
+    ConnectionDetector connectionDetector;
+    Downloader downloader;
     ArrayList<String> Links;
     Context c = this;
     ArrayAdapter<String> adapter;
@@ -55,6 +59,7 @@ public class MainActivity extends AppCompatActivity
 
     Progress progress;
     ErrorDialogMessage errorDialogMessage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,11 +67,25 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("News");
         setSupportActionBar(toolbar);
-
+        connectionDetector = new ConnectionDetector(this);
         errorDialogMessage = new ErrorDialogMessage(this);
+
+
+        if(!connectionDetector.isConnectingToInternet()){
+
+
+            errorDialogMessage.show();
+        }
+
+
         progress = new Progress(this);
         progress.show();
 
+
+
+        IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        downloader = new Downloader(this);
+        registerReceiver(downloader, filter);
 
         hashdata = new Stack<LinkedHashMap<String, String>>();
         queue = VolleySingleton.getInstance().getRequestQueue();
@@ -118,11 +137,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onErrorResponse(VolleyError e) {
 
-                    progress.stop();
-                    errorDialogMessage.show();
+                progress.stop();
+                errorDialogMessage.show();
 
 
-               }
+            }
         });
 
         firstReq.setTag("News");
@@ -134,11 +153,30 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (queue != null) {
+
+            queue.cancelAll("News");
+        }
+
+        if (hashdata.size() > 1) {
+
+            while (hashdata.size() != 1) {
+                hashdata.pop();
+            }
+
+
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (hashdata.size() == 2) {
+        } else if (hashdata.size() > 1 ) {
 
             LinkedHashMap<String, String> popped = hashdata.pop();
             Links.clear();
@@ -191,10 +229,17 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_notices) {
 
             intent = new Intent(MainActivity.this, Notices.class);
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_attendance) {
 
-        } else if (id == R.id.nav_slideshow) {
+            intent = new Intent(MainActivity.this, Attendance.class);
 
+        } else if (id == R.id.nav_internal_marks) {
+
+            intent = new Intent(MainActivity.this, InternalMarks.class);
+
+        } else if (id == R.id.nav_time_table) {
+
+            intent = new Intent(MainActivity.this, TimeTable.class);
 
         } else if (id == R.id.nav_aboutus) {
 
@@ -274,10 +319,35 @@ public class MainActivity extends AppCompatActivity
 
                 String link = temp.get(s);
 
-                Intent openBrowser = new Intent(Intent.ACTION_VIEW);
-                openBrowser.setData(Uri.parse(link));
-                startActivity(openBrowser);
+                int length = link.length();
 
+                int pointer = length - 1;
+                int pointer1 = pointer - 1;
+                int pointer2 = pointer1 - 1;
+
+                if(connectionDetector.isConnectingToInternet()){
+                if (link.charAt(pointer) == 'f' && link.charAt(pointer1) == 'd' && link.charAt(pointer2) == 'p') {
+
+                    if (!downloader.download(link)) {
+
+                        Toast.makeText(c, "Cant write on external", Toast.LENGTH_SHORT).show();
+
+                    } else {
+
+                        Toast.makeText(c, "Downloading", Toast.LENGTH_SHORT).show();
+
+                    }
+
+
+                } else {
+
+                    Intent openBrowser = new Intent(Intent.ACTION_VIEW);
+                    openBrowser.setData(Uri.parse(link));
+                    startActivity(openBrowser);
+                }
+            }else{
+                    errorDialogMessage.show();
+                }
 
             }
 
