@@ -33,23 +33,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.ac.du.sscbs.myapplication.MainActivity" />
         </activity>
-        <activity android:name=".Attendance">
-
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.ac.du.sscbs.myapplication.MainActivity" />
-
-        </activity>
-
-        <activity android:name=".InternalMarks">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="in.ac.du.sscbs.myapplication.MainActivity" />
-
-
-        </activity>
         <activity android:name=".TimeTable">
-
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.ac.du.sscbs.myapplication.MainActivity" />
+        </activity>
+        <activity android:name=".Login">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.ac.du.sscbs.myapplication.MainActivity" />

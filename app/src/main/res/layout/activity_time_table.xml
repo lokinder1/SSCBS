@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="in.ac.du.sscbs.myapplication.TimeTable">
@@ -11,4 +12,16 @@
         layout="@layout/app_bar"></include>
 
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/rl_time_table"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/wv_timetable"
+         />
+
+</android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

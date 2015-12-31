@@ -1,18 +1,30 @@
 package in.ac.du.sscbs.myapplication;
 
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
-public class TimeTable extends AppCompatActivity {
+public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
+
+    ConnectionDetector connectionDetector;
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    ErrorDialogMessage errorDialogMessage;
+
+    public WebView Wv;
+    final  String url = "http://collegeprojects.net.in/att_sscbs/main/Student/index.php";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_table);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("Time Table");
@@ -20,6 +32,25 @@ public class TimeTable extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Wv = (WebView) findViewById(R.id.wv_timetable);
+        WebSettings WebSettings = Wv.getSettings();
+        WebSettings.setJavaScriptEnabled(true);
+        Wv.setWebViewClient(new WebViewClient());
+
+        connectionDetector = new ConnectionDetector(this);
+        errorDialogMessage = new ErrorDialogMessage(this);
+        if (!connectionDetector.isConnectingToInternet()) {
+
+
+            errorDialogMessage.show();
+        }
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.rl_time_table);
+
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+
+
+        Wv.loadUrl(url);
 
     }
 
@@ -55,4 +86,12 @@ public class TimeTable extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onRefresh() {
+
+        String url = Wv.getUrl();
+        Wv.loadUrl(url);
+        mSwipeRefreshLayout.setRefreshing(false);
+
+    }
 }

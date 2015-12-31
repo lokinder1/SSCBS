@@ -18,6 +18,7 @@
         <include android:id="@+id/app_bar" layout="@layout/app_bar"></include>
 
         <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/rl_news"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         <ListView

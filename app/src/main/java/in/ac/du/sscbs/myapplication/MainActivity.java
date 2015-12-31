@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -32,7 +33,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -42,10 +42,11 @@ import java.util.Stack;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
 
     /*News Activity*/
+
     ConnectionDetector connectionDetector;
     Downloader downloader;
     ArrayList<String> Links;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity
     LinkedHashMap<String, String> data;
     Stack<LinkedHashMap<String, String>> hashdata;
     final String URL = "http://www.sscbs.du.ac.in";
-
+    SwipeRefreshLayout mSwipeRefreshLayout;
     Progress progress;
     ErrorDialogMessage errorDialogMessage;
 
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity
         errorDialogMessage = new ErrorDialogMessage(this);
 
 
-        if(!connectionDetector.isConnectingToInternet()){
+        if (!connectionDetector.isConnectingToInternet()) {
 
 
             errorDialogMessage.show();
@@ -80,7 +81,6 @@ public class MainActivity extends AppCompatActivity
 
         progress = new Progress(this);
         progress.show();
-
 
 
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
@@ -99,55 +99,15 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        initialrequest();
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
-        final StringRequest firstReq = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                Document d = Jsoup.parse(response);
-                Elements mainPageLinks = d.select("div.gn_browser div.gn_news");
-
-                Links = new ArrayList<String>();
-
-                Elements redirectingLinks = mainPageLinks.select("a[href]");
-
-                data = new LinkedHashMap<String, String>();
-
-                for (Element temp : redirectingLinks) {
-
-
-                    String tempText = temp.text();
-                    if (tempText.length() > 0) {
-                        Links.add(temp.text());
-                        data.put(temp.text(), temp.attr("abs:href"));
-                    }
-                }
-
-
-                hashdata.push(data);
-
-                adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_list_item_1, Links);
-                list.setAdapter(adapter);
-                progress.stop();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError e) {
-
-                progress.stop();
-                errorDialogMessage.show();
-
-
-            }
-        });
-
-        firstReq.setTag("News");
-
-        queue.add(firstReq);
         list.setOnItemClickListener(this);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.rl_news);
+
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
 
     }
@@ -173,10 +133,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (hashdata.size() > 1 ) {
+        } else if (hashdata.size() > 1) {
 
             LinkedHashMap<String, String> popped = hashdata.pop();
             Links.clear();
@@ -226,18 +188,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         Intent intent = null;
-        if (id == R.id.nav_notices) {
+
+        if (id == R.id.nav_login) {
+
+            intent = new Intent(MainActivity.this,Login.class);
+        } else if (id == R.id.nav_notices) {
 
             intent = new Intent(MainActivity.this, Notices.class);
-        } else if (id == R.id.nav_attendance) {
-
-            intent = new Intent(MainActivity.this, Attendance.class);
-
-        } else if (id == R.id.nav_internal_marks) {
-
-            intent = new Intent(MainActivity.this, InternalMarks.class);
-
-        } else if (id == R.id.nav_time_table) {
+        }
+        else if (id == R.id.nav_time_table) {
 
             intent = new Intent(MainActivity.this, TimeTable.class);
 
@@ -247,6 +206,7 @@ public class MainActivity extends AppCompatActivity
         }
         startActivity(intent);
 
+        initialrequest();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -260,7 +220,78 @@ public class MainActivity extends AppCompatActivity
         TextView tv = (TextView) view;
 
         String s = tv.getText().toString();
+        secondRequest(s);
+
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Links.clear();
+
+        hashdata.clear();
+        initialrequest();
+
+
+    }
+
+
+    void initialrequest() {
+
+
+        final StringRequest firstReq = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Document d = Jsoup.parse(response);
+                Elements mainPageLinks = d.select("div.gn_browser div.gn_news");
+
+                Links = new ArrayList<String>();
+
+                Elements redirectingLinks = mainPageLinks.select("a[href]");
+
+                data = new LinkedHashMap<String, String>();
+
+                for (Element temp : redirectingLinks) {
+
+
+                    String tempText = temp.text();
+                    if (tempText.length() > 0) {
+                        Links.add(temp.text());
+                        data.put(temp.text(), temp.attr("abs:href"));
+                    }
+                }
+
+
+                hashdata.push(data);
+
+                adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_list_item_1, Links);
+                list.setAdapter(adapter);
+                progress.stop();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError e) {
+
+                progress.stop();
+                errorDialogMessage.show();
+
+
+            }
+        });
+
+        firstReq.setTag("News");
+
+        queue.add(firstReq);
+
+    }
+
+    void secondRequest(String s) {
+
+
         if (!hashdata.empty() && hashdata.size() == 1) {
+
 
             progress.show();
 
@@ -325,27 +356,27 @@ public class MainActivity extends AppCompatActivity
                 int pointer1 = pointer - 1;
                 int pointer2 = pointer1 - 1;
 
-                if(connectionDetector.isConnectingToInternet()){
-                if (link.charAt(pointer) == 'f' && link.charAt(pointer1) == 'd' && link.charAt(pointer2) == 'p') {
+                if (connectionDetector.isConnectingToInternet()) {
+                    if (link.charAt(pointer) == 'f' && link.charAt(pointer1) == 'd' && link.charAt(pointer2) == 'p') {
 
-                    if (!downloader.download(link)) {
+                        if (!downloader.download(link)) {
 
-                        Toast.makeText(c, "Cant write on external", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(c, "Cant write on external", Toast.LENGTH_SHORT).show();
+
+                        } else {
+
+                            Toast.makeText(c, "Downloading", Toast.LENGTH_SHORT).show();
+
+                        }
+
 
                     } else {
 
-                        Toast.makeText(c, "Downloading", Toast.LENGTH_SHORT).show();
-
+                        Intent openBrowser = new Intent(Intent.ACTION_VIEW);
+                        openBrowser.setData(Uri.parse(link));
+                        startActivity(openBrowser);
                     }
-
-
                 } else {
-
-                    Intent openBrowser = new Intent(Intent.ACTION_VIEW);
-                    openBrowser.setData(Uri.parse(link));
-                    startActivity(openBrowser);
-                }
-            }else{
                     errorDialogMessage.show();
                 }
 
@@ -354,5 +385,19 @@ public class MainActivity extends AppCompatActivity
         }
 
 
+    }
+
+    @Override
+    public void onRefresh() {
+
+        if (hashdata != null) {
+
+            hashdata.clear();
+            initialrequest();
+            mSwipeRefreshLayout.setRefreshing(false);
+        } else {
+
+            Toast.makeText(c, "Yet to fetch data", Toast.LENGTH_SHORT).show();
+        }
     }
 }
