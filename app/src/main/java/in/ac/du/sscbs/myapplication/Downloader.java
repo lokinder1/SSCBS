@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
+import android.support.design.widget.Snackbar;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -108,7 +110,7 @@ public class Downloader extends BroadcastReceiver {
 
             myDownloadrefrence = downloadManager.enqueue(request);
         }  else {
-            Toast.makeText(context,"can't Write",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"No Write Permissions",Toast.LENGTH_SHORT).show();
         }
         return true;
     }
@@ -120,17 +122,7 @@ public class Downloader extends BroadcastReceiver {
         long refrence = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
         if (myDownloadrefrence == refrence) {
 
-
-            try {
-
-                ParcelFileDescriptor file = downloadManager.openDownloadedFile(refrence);
-
-                InputStream in = new FileInputStream(file.getFileDescriptor());
-        
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+                Toast.makeText(context,"File Has Been Downloaded",Toast.LENGTH_SHORT).show();
         }
 
     }

@@ -15,7 +15,6 @@ import android.webkit.WebViewClient;
 public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
 
-
     ConnectionDetector connectionDetector;
     SwipeRefreshLayout mSwipeRefreshLayout;
     ErrorDialogMessage errorDialogMessage;
@@ -24,7 +23,8 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
     Progress progress;
 
     public WebView Wv;
-    final  String url = "http://collegeprojects.net.in/att_sscbs/main/Student/index.php";
+    final String url = "http://collegeprojects.net.in/att_sscbs/main/Student/index.php";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,8 +54,6 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
 
-
-
         Wv.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -73,7 +71,7 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
             public void onPageStarted(WebView view, String url, Bitmap facIcon) {
                 loadingFinished = false;
                 progress.show();
-                 }
+            }
 
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -85,7 +83,7 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
 
                     progress.stop();
 
-                   } else {
+                } else {
                     redirect = false;
                 }
 
@@ -134,6 +132,22 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
         String url = Wv.getUrl();
         Wv.loadUrl(url);
         mSwipeRefreshLayout.setRefreshing(false);
+
+    }
+
+
+    @Override
+    public void onBackPressed() {
+
+        String loadingUrl = Wv.getUrl();
+
+        if (loadingUrl != null && !loadingUrl.equals(url)) {
+
+
+            Wv.goBack();
+
+        } else super.onBackPressed();
+
 
     }
 }
