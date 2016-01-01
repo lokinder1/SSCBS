@@ -81,31 +81,35 @@ public class Downloader extends BroadcastReceiver {
             return  false;
         }
 
-        File direct = new File(Environment.getExternalStorageDirectory()
-                + "/SSCBS");
+        if(isWriteable && isAvailable) {
 
-        if (!direct.exists()) {
-            direct.mkdirs();
+            File direct = new File(Environment.getExternalStorageDirectory()
+                    + "/SSCBS");
+
+            if (!direct.exists()) {
+                direct.mkdirs();
+            }
+
+
+            String fileName = getFileName(url);
+            Uri uri = Uri.parse(url);
+            request = new DownloadManager.Request(uri);
+
+
+            if (fileName != null) {
+
+                request.setTitle(fileName);
+            }
+
+
+            request.setDestinationInExternalPublicDir("/SSCBS", fileName);
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+
+            myDownloadrefrence = downloadManager.enqueue(request);
+        }  else {
+            Toast.makeText(context,"can't Write",Toast.LENGTH_SHORT).show();
         }
-
-
-        String fileName = getFileName(url);
-        Uri uri = Uri.parse(url);
-        request = new DownloadManager.Request(uri);
-
-
-        if(fileName!=null){
-
-            request.setTitle(fileName);
-        }
-
-
-        request.setDestinationInExternalPublicDir("/SSCBS",fileName);
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-
-        myDownloadrefrence = downloadManager.enqueue(request);
-
         return true;
     }
 

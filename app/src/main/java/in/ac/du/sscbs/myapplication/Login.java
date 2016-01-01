@@ -89,8 +89,8 @@ public class Login extends AppCompatActivity implements SwipeRefreshLayout.OnRef
 
 
         Wv.loadUrl(url);
-
-
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.rl_login);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
     }
 
     @Override
