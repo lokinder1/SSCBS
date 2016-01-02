@@ -191,14 +191,17 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_login) {
 
-            intent = new Intent(MainActivity.this,Login.class);
+            intent = new Intent(MainActivity.this, Login.class);
         } else if (id == R.id.nav_notices) {
 
             intent = new Intent(MainActivity.this, Notices.class);
-        }
-        else if (id == R.id.nav_time_table) {
+        } else if (id == R.id.nav_time_table) {
 
             intent = new Intent(MainActivity.this, TimeTable.class);
+
+        } else if (id == R.id.nav_courses) {
+
+            intent = new Intent(MainActivity.this,Courses.class);
 
         } else if (id == R.id.nav_aboutus) {
 

@@ -101,6 +101,8 @@ public class Downloader extends BroadcastReceiver {
             if (fileName != null) {
 
                 request.setTitle(fileName);
+
+
             }
 
 

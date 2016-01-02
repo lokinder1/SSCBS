@@ -42,7 +42,11 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.ac.du.sscbs.myapplication.MainActivity" />
-
+        </activity>
+        <activity android:name=".Courses">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.ac.du.sscbs.myapplication.MainActivity" />
         </activity>
     </application>
 
