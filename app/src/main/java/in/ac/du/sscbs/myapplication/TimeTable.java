@@ -20,7 +20,6 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
     ErrorDialogMessage errorDialogMessage;
     boolean loadingFinished = true;
     boolean redirect = false;
-    Progress progress;
 
     public WebView Wv;
     final String url = "http://collegeprojects.net.in/att_sscbs/main/Student/index.php";
@@ -30,7 +29,6 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_table);
 
-        progress = new Progress(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("Time Table");
         setSupportActionBar(toolbar);
@@ -56,39 +54,42 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
 
         Wv.setWebViewClient(new WebViewClient() {
 
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String urlNewString) {
-                if (!loadingFinished) {
-                    redirect = true;
-                }
+                                @Override
+                                public boolean shouldOverrideUrlLoading(WebView view, String urlNewString) {
+                                    if (!loadingFinished) {
+                                        redirect = true;
+                                    }
 
-                loadingFinished = false;
-                view.loadUrl(urlNewString);
-                return true;
-            }
+                                    loadingFinished = false;
+                                    view.loadUrl(urlNewString);
+                                    return true;
+                                }
 
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap facIcon) {
-                loadingFinished = false;
-                progress.show();
-            }
+                                @Override
+                                public void onPageStarted(WebView view, String url, Bitmap facIcon) {
+                                    loadingFinished = false;
+                                    mSwipeRefreshLayout.setRefreshing(true);
+                                }
 
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                if (!redirect) {
-                    loadingFinished = true;
-                }
+                                @Override
+                                public void onPageFinished(WebView view, String url) {
+                                    if (!redirect) {
+                                        loadingFinished = true;
+                                    }
 
-                if (loadingFinished && !redirect) {
+                                    if (loadingFinished && !redirect) {
 
-                    progress.stop();
+                                        mSwipeRefreshLayout.setRefreshing(false);
 
-                } else {
-                    redirect = false;
-                }
+                                    } else {
+                                        redirect = false;
+                                    }
 
-            }
-        });
+                                }
+                            }
+
+
+        );
         Wv.loadUrl(url);
 
 

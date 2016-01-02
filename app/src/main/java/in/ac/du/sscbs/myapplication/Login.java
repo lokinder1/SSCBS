@@ -22,7 +22,6 @@ public class Login extends AppCompatActivity implements SwipeRefreshLayout.OnRef
     ErrorDialogMessage errorDialogMessage;
     boolean loadingFinished = true;
     boolean redirect = false;
-    Progress progress;
     Context context;
     public WebView Wv;
     final String url = "http://collegeprojects.net.in/att_sscbs/main/student/student_login.php";
@@ -31,7 +30,6 @@ public class Login extends AppCompatActivity implements SwipeRefreshLayout.OnRef
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        progress = new Progress(this);
         context = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("Login");
@@ -68,7 +66,7 @@ public class Login extends AppCompatActivity implements SwipeRefreshLayout.OnRef
             @Override
             public void onPageStarted(WebView view, String url, Bitmap facIcon) {
                 loadingFinished = false;
-                progress.show();
+                 mSwipeRefreshLayout.setRefreshing(true);
             }
 
             @Override
@@ -78,7 +76,7 @@ public class Login extends AppCompatActivity implements SwipeRefreshLayout.OnRef
                 }
 
                 if (loadingFinished && !redirect) {
-                    progress.stop();
+                   mSwipeRefreshLayout.setRefreshing(false);
 
                 } else {
                     redirect = false;
