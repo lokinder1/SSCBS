@@ -45,7 +45,7 @@ public class Courses extends AppCompatActivity implements AdapterView.OnItemClic
         ArrayAdapter<String> cours = new ArrayAdapter<String>(this,
                 R.layout.simple_list_item_1, cour);
         course.setAdapter(cours);
-        downloader = new Downloader(this);
+        downloader = Downloader.getInstance();
         connectionDetector = new ConnectionDetector(this);
         course.setOnItemClickListener(this);
         errorDialogMessage = new ErrorDialogMessage(this);

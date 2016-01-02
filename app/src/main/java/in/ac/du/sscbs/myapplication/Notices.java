@@ -77,7 +77,7 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
         progress.show();
 
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        downloader = new Downloader(this);
+        downloader = Downloader.getInstance();
         registerReceiver(downloader, filter);
         hashdata = new Stack<LinkedHashMap<String, String>>();
         queue = VolleySingleton.getInstance().getRequestQueue();

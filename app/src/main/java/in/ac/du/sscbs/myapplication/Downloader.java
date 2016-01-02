@@ -25,7 +25,7 @@ public class Downloader extends BroadcastReceiver {
 
 
 
-
+    static Downloader downloader = null;
     String state;
     DownloadManager.Request request;
     DownloadManager downloadManager;
@@ -57,13 +57,26 @@ public class Downloader extends BroadcastReceiver {
 
 
 
-    Downloader(Context c) {
+    private Downloader() {
+
 
         state = Environment.getExternalStorageState();
 
 
-        context = c;
+        context = MyApplication.getAppContext();
         downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+
+    }
+
+    public static  Downloader getInstance(){
+
+        if(downloader == null)
+        {
+            downloader = new Downloader();
+        }
+
+
+            return  downloader;
 
     }
 

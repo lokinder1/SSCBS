@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity
 
 
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        downloader = new Downloader(this);
+        downloader = Downloader.getInstance();
         registerReceiver(downloader, filter);
 
         hashdata = new Stack<LinkedHashMap<String, String>>();
