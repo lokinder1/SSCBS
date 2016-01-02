@@ -145,4 +145,10 @@ public class Courses extends AppCompatActivity implements AdapterView.OnItemClic
         }
 
     }
+
+    @Override
+    public void onBackPressed() {
+        NavUtils.navigateUpFromSameTask(this);
+
+    }
 }

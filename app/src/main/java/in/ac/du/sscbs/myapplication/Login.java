@@ -133,8 +133,10 @@ public class Login extends AppCompatActivity implements SwipeRefreshLayout.OnRef
     }
 
 
+    @Override
+    public void onBackPressed() {
 
+        NavUtils.navigateUpFromSameTask(this);
 
-
-
+    }
 }

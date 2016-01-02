@@ -78,4 +78,10 @@ public class AboutUs extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onBackPressed() {
+
+        NavUtils.navigateUpFromSameTask(this);
+
+    }
 }

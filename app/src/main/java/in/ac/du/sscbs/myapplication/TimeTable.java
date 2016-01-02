@@ -147,8 +147,10 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
 
             Wv.goBack();
 
-        } else super.onBackPressed();
+        } else {
+            NavUtils.navigateUpFromSameTask(this);
 
+        }
 
     }
 }

@@ -218,4 +218,11 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
 
 
     }
+
+    @Override
+    public void onBackPressed() {
+
+        NavUtils.navigateUpFromSameTask(this);
+
+    }
 }
