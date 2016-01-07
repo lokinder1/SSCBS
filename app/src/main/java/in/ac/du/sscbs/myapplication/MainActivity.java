@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.rl_news);
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeColors(R.color.primaryColorDark);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.progress_color_1, R.color.progress_color_3, R.color.progress_color_4, R.color.progress_color_5);
 
     }
 

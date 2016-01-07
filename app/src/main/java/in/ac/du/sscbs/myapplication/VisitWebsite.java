@@ -23,7 +23,6 @@ public class VisitWebsite extends AppCompatActivity implements SwipeRefreshLayou
     ErrorDialogMessage errorDialogMessage;
     boolean loadingFinished = true;
     boolean redirect = false;
-    Progress progress;
     Context context;
     public WebView Wv;
     final String url = "http://www.sscbsdu.ac.in";
@@ -32,7 +31,6 @@ public class VisitWebsite extends AppCompatActivity implements SwipeRefreshLayou
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visit_website);
-        progress = new Progress(this);
         context = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("HOME");
@@ -69,7 +67,7 @@ public class VisitWebsite extends AppCompatActivity implements SwipeRefreshLayou
                 @Override
                 public void onPageStarted(WebView view, String url, Bitmap facIcon) {
                     loadingFinished = false;
-                    progress.show();
+                    mSwipeRefreshLayout.setRefreshing(true);
                 }
 
                 @Override
@@ -79,7 +77,7 @@ public class VisitWebsite extends AppCompatActivity implements SwipeRefreshLayou
                     }
 
                     if (loadingFinished && !redirect) {
-                        progress.stop();
+                       mSwipeRefreshLayout.setRefreshing(false);
 
                     } else {
                         redirect = false;

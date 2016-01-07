@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 public class Login extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
+
     final String message = "NETWORK ERROR\n SWIP TO REFRESH";
     boolean InternetConnectionError;
     ConnectionDetector connectionDetector;
@@ -44,9 +45,15 @@ public class Login extends AppCompatActivity implements SwipeRefreshLayout.OnRef
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        InternetConnectionError = false;
 
+        connectionDetector = new ConnectionDetector(this);
         errorDialogMessage = new ErrorDialogMessage(this);
+        if (!connectionDetector.isConnectingToInternet()) {
+
+
+            errorDialogMessage.show();
+        }
+
         Wv = (WebView) findViewById(R.id.wv_student_login);
         WebSettings WebSettings = Wv.getSettings();
         WebSettings.setJavaScriptEnabled(true);
@@ -79,13 +86,27 @@ public class Login extends AppCompatActivity implements SwipeRefreshLayout.OnRef
                                     if (loadingFinished && !redirect) {
 
                                         mSwipeRefreshLayout.setRefreshing(false);
-                                        InternetConnectionError = false;
-                                        InternetConnectionError = false;
 
                                     } else {
                                         redirect = false;
                                     }
 
+                                }
+
+
+                                public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                                    //Intent intent = new Intent(getApplicationContext(),check_connection.class);
+                                    //startActivity(intent);
+                                    // FragmentManager fm =getFragmentManager();
+                                    // fm.beginTransaction().replace(R.id.content,new connectionErrorFragment()).commit();
+                                    view.loadUrl("about:blank");
+
+                                    CharSequence text = "Check your internet ,we are not able to load page!";
+                                    int duration = Toast.LENGTH_LONG;
+
+                                    Toast toast = Toast.makeText(context, text, duration);
+                                    toast.show();
+                                    super.onReceivedError(view, errorCode, description, failingUrl);
                                 }
 
 
@@ -98,17 +119,18 @@ public class Login extends AppCompatActivity implements SwipeRefreshLayout.OnRef
         Wv.loadUrl(url);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.rl_login);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeColors(R.color.primaryColorDark, R.color.primaryColor);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.progress_color_1, R.color.progress_color_3, R.color.progress_color_4, R.color.progress_color_5);
 
     }
+
 
     @Override
     public void onRefresh() {
 
         mSwipeRefreshLayout.setRefreshing(false);
 
-            String url = Wv.getUrl();
-            Wv.loadUrl(url);
+        String url = Wv.getUrl();
+        Wv.loadUrl(url);
 
     }
 
@@ -118,6 +140,7 @@ public class Login extends AppCompatActivity implements SwipeRefreshLayout.OnRef
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -147,7 +170,17 @@ public class Login extends AppCompatActivity implements SwipeRefreshLayout.OnRef
     @Override
     public void onBackPressed() {
 
-        NavUtils.navigateUpFromSameTask(this);
+        if (Wv.getUrl().equals("about:blank") ||  Wv.getUrl().equals("http://collegeprojects.net.in/att_sscbs/main/student/menustudent.php") || Wv.getUrl().equals(url)) {
+
+
+
+                NavUtils.navigateUpFromSameTask(this);
+            }else{
+
+                Wv.goBack();
+            }
+
+
+        }
 
     }
-}

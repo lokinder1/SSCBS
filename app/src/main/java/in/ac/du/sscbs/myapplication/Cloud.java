@@ -23,7 +23,6 @@ public class Cloud extends AppCompatActivity implements SwipeRefreshLayout.OnRef
     ErrorDialogMessage errorDialogMessage;
     boolean loadingFinished = true;
     boolean redirect = false;
-    Progress progress;
     Context context;
     public WebView Wv;
     final String url = "http://10.67.1.9/";
@@ -32,7 +31,6 @@ public class Cloud extends AppCompatActivity implements SwipeRefreshLayout.OnRef
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cloud);
-        progress = new Progress(this);
         context = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("SSCBS CLOUD");
@@ -68,7 +66,7 @@ public class Cloud extends AppCompatActivity implements SwipeRefreshLayout.OnRef
                 @Override
                 public void onPageStarted(WebView view, String url, Bitmap facIcon) {
                     loadingFinished = false;
-                    progress.show();
+                    mSwipeRefreshLayout.setRefreshing(true);
                 }
 
                 @Override
@@ -78,20 +76,20 @@ public class Cloud extends AppCompatActivity implements SwipeRefreshLayout.OnRef
                     }
 
                     if (loadingFinished && !redirect) {
-                        progress.stop();
 
+                        mSwipeRefreshLayout.setRefreshing(true);
                     } else {
                         redirect = false;
                     }
 
                 }
+
                 @Override
                 public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                     // Intent intent = new Intent(getApplicationContext(),check_connection.class);
                     // startActivity(intent);
                     view.loadUrl("about:blank");
 
-                    Context context = getApplicationContext();
                     CharSequence text = "You Must Be Connected to the Wifi(local network) of the S.S.C.B.S !";
                     int duration = Toast.LENGTH_LONG;
 
@@ -108,6 +106,7 @@ public class Cloud extends AppCompatActivity implements SwipeRefreshLayout.OnRef
             mSwipeRefreshLayout.setColorSchemeResources(R.color.progress_color_1, R.color.progress_color_3, R.color.progress_color_4, R.color.progress_color_5);
         }
     }
+
     @Override
     public void onRefresh() {
 

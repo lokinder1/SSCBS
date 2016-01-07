@@ -90,7 +90,7 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
         list.setOnItemClickListener(this);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.rl_notices);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeColors(R.color.primaryColorDark, R.color.primaryColor);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.progress_color_1, R.color.progress_color_3, R.color.progress_color_4, R.color.progress_color_5);
 
 
 
@@ -235,6 +235,7 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
                 adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_list_item_1, Links);
                 list.setAdapter(adapter);
                 progress.stop();
+
             }
         }, new Response.ErrorListener() {
             @Override

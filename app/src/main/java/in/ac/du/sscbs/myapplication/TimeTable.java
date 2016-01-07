@@ -1,5 +1,6 @@
 package in.ac.du.sscbs.myapplication;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.app.NavUtils;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -20,6 +22,7 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
     ErrorDialogMessage errorDialogMessage;
     boolean loadingFinished = true;
     boolean redirect = false;
+    Context context;
 
     public WebView Wv;
     final String url = "http://collegeprojects.net.in/att_sscbs/main/Student/index.php";
@@ -28,7 +31,7 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_table);
-
+        context = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("Time Table");
         setSupportActionBar(toolbar);
@@ -50,7 +53,7 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.rl_time_table);
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeColors(R.color.primaryColorDark);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.progress_color_1, R.color.progress_color_3, R.color.progress_color_4, R.color.progress_color_5);
 
         Wv.setWebViewClient(new WebViewClient() {
 
@@ -86,6 +89,24 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
                                     }
 
                                 }
+
+                                public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                                    //Intent intent = new Intent(getApplicationContext(),check_connection.class);
+                                    //startActivity(intent);
+                                    // FragmentManager fm =getFragmentManager();
+                                    // fm.beginTransaction().replace(R.id.content,new connectionErrorFragment()).commit();
+                                    view.loadUrl("about:blank");
+
+                                    CharSequence text = "Check your internet ,we are not able to load page!";
+                                    int duration = Toast.LENGTH_LONG;
+
+                                    Toast toast = Toast.makeText(context, text, duration);
+                                    toast.show();
+                                    super.onReceivedError(view, errorCode, description, failingUrl);
+                                }
+
+
+
                             }
 
 
@@ -145,7 +166,14 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
         if (loadingUrl != null && !loadingUrl.equals(url)) {
 
 
-            Wv.goBack();
+            if(loadingUrl.equals("about:blank"))
+            {
+                NavUtils.navigateUpFromSameTask(this);
+
+            }
+            else Wv.goBack();
+
+
 
         } else {
             NavUtils.navigateUpFromSameTask(this);
