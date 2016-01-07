@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="in.ac.du.sscbs.myapplication.Login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="in.ac.du.sscbs.myapplication.Notices">
+    android:orientation="vertical">
 
 
     <include
@@ -12,23 +12,16 @@
         layout="@layout/app_bar"></include>
 
 
-    <include
-
-        layout="@layout/logoimageview"
-        android:layout_width="wrap_content"
-        android:layout_height="103dp" />
-
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/rl_notices"
+        android:id="@+id/rl_login"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
 
-        <ListView
-            android:id="@+id/lv_notices"
+        <WebView
+            android:id="@+id/wv_student_home"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal" />
     </android.support.v4.widget.SwipeRefreshLayout>
-
-
 </LinearLayout>

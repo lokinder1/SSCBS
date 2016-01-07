@@ -14,9 +14,19 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+
+
         <include
             android:id="@+id/app_bar"
             layout="@layout/app_bar"></include>
+
+
+        <include
+
+            layout="@layout/logoimageview"
+            android:layout_width="wrap_content"
+            android:layout_height="103dp" />
+
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/rl_news"

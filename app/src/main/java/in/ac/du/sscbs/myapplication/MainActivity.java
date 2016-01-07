@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("News");
-        toolbar.setLogo(R.drawable.aclogo);
         setSupportActionBar(toolbar);
         connectionDetector = new ConnectionDetector(this);
         errorDialogMessage = new ErrorDialogMessage(this);
@@ -92,7 +91,6 @@ public class MainActivity extends AppCompatActivity
         queue = VolleySingleton.getInstance().getRequestQueue();
         list = (ListView) findViewById(R.id.lv_news);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -208,6 +206,18 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_aboutus) {
 
             intent = new Intent(MainActivity.this, AboutUs.class);
+        } else if (id == R.id.nav_devs) {
+
+            intent = new Intent(MainActivity.this, Devs.class);
+
+        }else if(id == R.id.nav_visit_website){
+
+            intent = new Intent(MainActivity.this, VisitWebsite.class);
+
+        }else if(id == R.id.nav_cloud){
+
+            intent = new Intent(MainActivity.this, Cloud.class);
+
         }
         startActivity(intent);
 

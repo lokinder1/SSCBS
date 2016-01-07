@@ -14,9 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:screenOrientation="portrait"
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,40 +24,61 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AboutUs"
-            android:screenOrientation="portrait"
-            >
+        <activity
+            android:name=".AboutUs"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.ac.du.sscbs.myapplication.MainActivity" />
         </activity>
-        <activity android:name=".Notices"
-            android:screenOrientation="portrait"
-            >
+        <activity
+            android:name=".Notices"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.ac.du.sscbs.myapplication.MainActivity" />
         </activity>
-        <activity android:name=".TimeTable"
-            android:screenOrientation="portrait"
-            >
+        <activity
+            android:name=".TimeTable"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.ac.du.sscbs.myapplication.MainActivity" />
         </activity>
-        <activity android:name=".Login"
-            android:screenOrientation="portrait"
-            >
+        <activity
+            android:name=".Login"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.ac.du.sscbs.myapplication.MainActivity" />
         </activity>
-        <activity android:name=".Courses"
-            android:screenOrientation="portrait"
-            >
+        <activity
+            android:name=".Courses"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="in.ac.du.sscbs.myapplication.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Devs"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.ac.du.sscbs.myapplication.MainActivity" />
+        </activity>
+        <activity
+            android:name=".VisitWebsite"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.ac.du.sscbs.myapplication.MainActivity" />
+        </activity>
+        <activity android:name=".Cloud"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="in.ac.du.sscbs.myapplication.MainActivity" />
+
         </activity>
     </application>
 
