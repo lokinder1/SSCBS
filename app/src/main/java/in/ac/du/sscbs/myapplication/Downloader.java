@@ -1,6 +1,8 @@
 package in.ac.du.sscbs.myapplication;
 
+import android.app.Activity;
 import android.app.DownloadManager;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,21 +10,23 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.support.design.widget.Snackbar;
+import android.webkit.MimeTypeMap;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Inet4Address;
 import java.net.URI;
 
 /**
  * Created by baymax on 30/12/15.
  */
 public class Downloader extends BroadcastReceiver {
-
 
 
     static Downloader downloader = null;
@@ -32,21 +36,20 @@ public class Downloader extends BroadcastReceiver {
     Context context;
     long myDownloadrefrence;
     boolean isAvailable, isWriteable;
+    boolean isFileAvailable;
+
+    static String getFileName(String temp) {
 
 
-    static String getFileName(String temp){
-
-
-
-        String data  = null;
+        String data = null;
         StringBuffer stringBuffer = new StringBuffer();
 
         int length = temp.length();
         length--;
-        while(temp.charAt(length)!='/'){
+        while (temp.charAt(length) != '/') {
 
 
-            stringBuffer.insert(0,temp.charAt(length));
+            stringBuffer.insert(0, temp.charAt(length));
             --length;
         }
 
@@ -54,7 +57,6 @@ public class Downloader extends BroadcastReceiver {
 
         return data;
     }
-
 
 
     private Downloader() {
@@ -68,19 +70,21 @@ public class Downloader extends BroadcastReceiver {
 
     }
 
-    public static  Downloader getInstance(){
+    public static Downloader getInstance() {
 
-        if(downloader == null)
-        {
+        if (downloader == null) {
             downloader = new Downloader();
         }
 
 
-            return  downloader;
+        return downloader;
 
     }
 
+
     boolean download(String url) {
+
+        isFileAvailable = false;
 
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             isAvailable = isWriteable = true;
@@ -89,14 +93,14 @@ public class Downloader extends BroadcastReceiver {
             isWriteable = false;
 
             return false;
-        }  else {
+        } else {
 
             isAvailable = false;
             isWriteable = false;
-            return  false;
+            return false;
         }
 
-        if(isWriteable && isAvailable) {
+        if (isWriteable && isAvailable) {
 
             File direct = new File(Environment.getExternalStorageDirectory()
                     + "/SSCBS");
@@ -124,9 +128,14 @@ public class Downloader extends BroadcastReceiver {
 
 
             myDownloadrefrence = downloadManager.enqueue(request);
-        }  else {
-            Toast.makeText(context,"No Write Permissions",Toast.LENGTH_SHORT).show();
+
+
+        } else {
+
+            Toast.makeText(context, "No Write Permissions", Toast.LENGTH_SHORT).show();
         }
+
+
         return true;
     }
 
@@ -137,7 +146,7 @@ public class Downloader extends BroadcastReceiver {
         long refrence = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
         if (myDownloadrefrence == refrence) {
 
-                Toast.makeText(context,"File Has Been Downloaded",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "File Has Been Downloaded", Toast.LENGTH_SHORT).show();
         }
 
     }

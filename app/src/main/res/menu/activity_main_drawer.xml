@@ -3,27 +3,32 @@
 
     <group android:checkableBehavior="single">
 
-        <item
-            android:id="@+id/nav_login"
-            android:title="Login"
+            <item
+                android:id="@+id/nav_login"
+                android:icon="@drawable/login"
+                android:title="Login"
 
-            />
-
+                />
         <item
             android:id="@+id/nav_notices"
+            android:icon="@drawable/notices"
             android:title="Notices" />
 
         <item
             android:id="@+id/nav_time_table"
+            android:icon="@drawable/timetable"
             android:title="Time Table" />
 
         <item
             android:id="@+id/nav_courses"
-            android:title="Courses"/>
+            android:icon="@drawable/courses"
+            android:title="Courses" />
 
         <item
             android:id="@+id/nav_aboutus"
+            android:icon="@drawable/about"
             android:title="About US" />
+
     </group>
 
 

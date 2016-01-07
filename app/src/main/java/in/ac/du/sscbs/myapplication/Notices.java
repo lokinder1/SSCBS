@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -33,8 +34,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Stack;
 
-public class Notices extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class Notices extends AppCompatActivity implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
+    SwipeRefreshLayout mSwipeRefreshLayout;
     ConnectionDetector connectionDetector;
     Downloader downloader;
     ArrayList<String> Links;
@@ -66,7 +68,7 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
         errorDialogMessage = new ErrorDialogMessage(this);
 
 
-        if(!connectionDetector.isConnectingToInternet()){
+        if (!connectionDetector.isConnectingToInternet()) {
 
 
             errorDialogMessage.show();
@@ -82,6 +84,127 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
         hashdata = new Stack<LinkedHashMap<String, String>>();
         queue = VolleySingleton.getInstance().getRequestQueue();
         list = (ListView) findViewById(R.id.lv_notices);
+
+        firstRequest();
+
+        list.setOnItemClickListener(this);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.rl_notices);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeColors(R.color.primaryColorDark, R.color.primaryColor);
+
+
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+
+
+        }
+
+        if (id == android.R.id.home) {
+
+            NavUtils.navigateUpFromSameTask(this);
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+        TextView tv = (TextView) view;
+
+        String s = tv.getText().toString();
+
+        if (!hashdata.empty()) {
+
+
+            LinkedHashMap<String, String> temp = hashdata.peek();
+
+            String link = temp.get(s);
+
+            int length = link.length();
+
+            int pointer = length - 1;
+            int pointer1 = pointer - 1;
+            int pointer2 = pointer1 - 1;
+
+            if (connectionDetector.isConnectingToInternet()) {
+                if (link.charAt(pointer) == 'f' && link.charAt(pointer1) == 'd' && link.charAt(pointer2) == 'p') {
+
+                    if (!downloader.download(link)) {
+
+                        Toast.makeText(c, "Cant write on external", Toast.LENGTH_SHORT).show();
+
+                    } else {
+
+                        Toast.makeText(c, "Downloading", Toast.LENGTH_SHORT).show();
+
+                    }
+
+
+                } else {
+
+                    Intent openBrowser = new Intent(Intent.ACTION_VIEW);
+                    openBrowser.setData(Uri.parse(link));
+                    startActivity(openBrowser);
+                }
+            } else {
+                errorDialogMessage.show();
+            }
+
+        }
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        NavUtils.navigateUpFromSameTask(this);
+
+    }
+
+    @Override
+    public void onRefresh() {
+
+
+
+            while(hashdata.size()>0){
+
+                hashdata.pop();
+            }
+
+        firstRequest();
+        mSwipeRefreshLayout.setRefreshing(false);
+
+
+    }
+
+    void firstRequest(){
+
+
 
         final StringRequest firstReq = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
@@ -127,102 +250,5 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
         firstReq.setTag("Notices");
 
         queue.add(firstReq);
-        list.setOnItemClickListener(this);
-
-
-
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-
-
-        }
-
-        if (id == android.R.id.home) {
-
-            NavUtils.navigateUpFromSameTask(this);
-
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
-
-        TextView tv = (TextView) view;
-
-        String s = tv.getText().toString();
-
-        if (!hashdata.empty()) {
-
-
-            LinkedHashMap<String, String> temp = hashdata.peek();
-
-            String link = temp.get(s);
-
-            int length = link.length();
-
-            int pointer = length - 1;
-            int pointer1 = pointer - 1;
-            int pointer2 = pointer1 - 1;
-
-            if(connectionDetector.isConnectingToInternet()){
-                if (link.charAt(pointer) == 'f' && link.charAt(pointer1) == 'd' && link.charAt(pointer2) == 'p') {
-
-                    if (!downloader.download(link)) {
-
-                        Toast.makeText(c, "Cant write on external", Toast.LENGTH_SHORT).show();
-
-                    } else {
-
-                        Toast.makeText(c, "Downloading", Toast.LENGTH_SHORT).show();
-
-                    }
-
-
-                } else {
-
-                    Intent openBrowser = new Intent(Intent.ACTION_VIEW);
-                    openBrowser.setData(Uri.parse(link));
-                    startActivity(openBrowser);
-                }
-            }else{
-                errorDialogMessage.show();
-            }
-
-        }
-
-
-
-
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        NavUtils.navigateUpFromSameTask(this);
-
     }
 }

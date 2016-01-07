@@ -50,7 +50,7 @@ public class TimeTable extends AppCompatActivity implements SwipeRefreshLayout.O
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.rl_time_table);
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
-
+        mSwipeRefreshLayout.setColorSchemeColors(R.color.primaryColorDark);
 
         Wv.setWebViewClient(new WebViewClient() {
 

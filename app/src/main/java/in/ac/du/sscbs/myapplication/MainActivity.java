@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle("News");
+        toolbar.setLogo(R.drawable.aclogo);
         setSupportActionBar(toolbar);
         connectionDetector = new ConnectionDetector(this);
         errorDialogMessage = new ErrorDialogMessage(this);
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -108,7 +110,7 @@ public class MainActivity extends AppCompatActivity
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.rl_news);
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
-
+        mSwipeRefreshLayout.setColorSchemeColors(R.color.primaryColorDark);
 
     }
 
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_courses) {
 
-            intent = new Intent(MainActivity.this,Courses.class);
+            intent = new Intent(MainActivity.this, Courses.class);
 
         } else if (id == R.id.nav_aboutus) {
 

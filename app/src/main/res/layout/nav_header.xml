@@ -1,22 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:background="#FFF"
-    android:orientation="vertical"
-
-    >
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/primaryColorDark">
 
 
     <ImageView
-
+        android:id="@+id/college_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="50dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="5dp"
         android:src="@mipmap/logo"
 
         />
 
-</LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/Name"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/college_icon"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="5dp"
+        android:textColor="#FFF"
+        android:text="S.S.C.B.S"
+        android:textSize="25dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/college_icon"
+        android:layout_below="@id/Name"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
+        android:textColor="#FFF"
+        android:text="@string/college_name"
+        android:textSize="15dp" />
+
+
+</RelativeLayout>
