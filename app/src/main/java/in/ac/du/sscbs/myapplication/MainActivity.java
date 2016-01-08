@@ -116,10 +116,7 @@ public class MainActivity extends AppCompatActivity
     protected void onStop() {
         super.onStop();
 
-        if (queue != null) {
-
-            queue.cancelAll("News");
-        }
+        queue.getCache().remove("News");
 
         if (hashdata.size() > 1) {
 

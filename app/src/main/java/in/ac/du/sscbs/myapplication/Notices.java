@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Cache;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -96,6 +97,14 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
 
     }
 
+    @Override
+    protected void onStop() {
+
+
+        queue.getCache().remove("Notices");
+        super.onStop();
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

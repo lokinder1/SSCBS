@@ -118,7 +118,7 @@ public class VisitWebsite extends AppCompatActivity implements SwipeRefreshLayou
             finish();
         }
 
-        super.onBackPressed();
+       NavUtils.navigateUpFromSameTask(this);
     }
 
     @Override
