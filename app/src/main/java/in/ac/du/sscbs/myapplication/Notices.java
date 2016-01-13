@@ -100,7 +100,7 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
     @Override
     protected void onStop() {
 
-
+        if(!(Checker.getCount() > 0))
         queue.getCache().remove("Notices");
         super.onStop();
 
@@ -200,11 +200,9 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
 
 
 
-            while(hashdata.size()>0){
+        hashdata.clear();
 
-                hashdata.pop();
-            }
-
+        queue.getCache().clear();
         firstRequest();
         mSwipeRefreshLayout.setRefreshing(false);
 
@@ -214,6 +212,7 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
     void firstRequest(){
 
 
+        Checker.increment();
 
         final StringRequest firstReq = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override

@@ -115,8 +115,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
 
-        hashdata.clear();
-        queue.getCache().remove("News");
+        if(!(Checker.getCount() > 0)) {
+            hashdata.clear();
+            queue.getCache().clear();
+        }
         super.onStop();
 
     }
@@ -175,6 +177,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+
         int id = item.getItemId();
 
         Intent intent = null;
@@ -244,6 +247,7 @@ public class MainActivity extends AppCompatActivity
 
     void initialrequest() {
 
+        Checker.increment();
 
         final StringRequest firstReq = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
@@ -398,7 +402,9 @@ public class MainActivity extends AppCompatActivity
         if (hashdata != null) {
 
             hashdata.clear();
+            queue.getCache().clear();
             initialrequest();
+
             mSwipeRefreshLayout.setRefreshing(false);
         } else {
 
