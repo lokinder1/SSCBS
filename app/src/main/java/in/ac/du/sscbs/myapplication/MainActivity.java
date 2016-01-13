@@ -114,18 +114,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
+
+        hashdata.clear();
+        queue.getCache().remove("News");
         super.onStop();
 
-        queue.getCache().remove("News");
-
-        if (hashdata.size() > 1) {
-
-            while (hashdata.size() != 1) {
-                hashdata.pop();
-            }
-
-
-        }
     }
 
     @Override
@@ -207,11 +200,11 @@ public class MainActivity extends AppCompatActivity
 
             intent = new Intent(MainActivity.this, Devs.class);
 
-        }else if(id == R.id.nav_visit_website){
+        } else if (id == R.id.nav_visit_website) {
 
             intent = new Intent(MainActivity.this, VisitWebsite.class);
 
-        }else if(id == R.id.nav_cloud){
+        } else if (id == R.id.nav_cloud) {
 
             intent = new Intent(MainActivity.this, Cloud.class);
 

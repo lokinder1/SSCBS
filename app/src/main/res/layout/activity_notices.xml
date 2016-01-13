@@ -25,6 +25,7 @@
 
 
         <ListView
+            android:padding="20dp"
             android:background="#FFF"
             android:id="@+id/lv_notices"
             android:layout_width="match_parent"
