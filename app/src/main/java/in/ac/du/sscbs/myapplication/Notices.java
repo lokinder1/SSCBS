@@ -75,7 +75,6 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
             errorDialogMessage.show();
         }
 
-
         progress = new Progress(this);
         progress.show();
 
@@ -85,7 +84,7 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
         hashdata = new Stack<LinkedHashMap<String, String>>();
         queue = VolleySingleton.getInstance().getRequestQueue();
         list = (ListView) findViewById(R.id.lv_notices);
-
+        queue.getCache().clear();
         firstRequest();
 
         list.setOnItemClickListener(this);
@@ -97,14 +96,6 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
 
     }
 
-    @Override
-    protected void onStop() {
-
-        if(!(Checker.getCount() > 0))
-        queue.getCache().remove("Notices");
-        super.onStop();
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -199,10 +190,9 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
     public void onRefresh() {
 
 
-
-        hashdata.clear();
-
         queue.getCache().clear();
+        progress.show();
+        hashdata.clear();
         firstRequest();
         mSwipeRefreshLayout.setRefreshing(false);
 

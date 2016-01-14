@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -46,7 +47,6 @@ public class MainActivity extends AppCompatActivity
 
 
     /*News Activity*/
-
     ConnectionDetector connectionDetector;
     Downloader downloader;
     ArrayList<String> Links;
@@ -71,13 +71,16 @@ public class MainActivity extends AppCompatActivity
         connectionDetector = new ConnectionDetector(this);
         errorDialogMessage = new ErrorDialogMessage(this);
 
+        hashdata = new Stack<LinkedHashMap<String, String>>();
+        queue = VolleySingleton.getInstance().getRequestQueue();
+        list = (ListView) findViewById(R.id.lv_news);
+
 
         if (!connectionDetector.isConnectingToInternet()) {
 
 
             errorDialogMessage.show();
         }
-
 
         progress = new Progress(this);
         progress.show();
@@ -86,11 +89,8 @@ public class MainActivity extends AppCompatActivity
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         downloader = Downloader.getInstance();
         registerReceiver(downloader, filter);
-
-        hashdata = new Stack<LinkedHashMap<String, String>>();
-        queue = VolleySingleton.getInstance().getRequestQueue();
-        list = (ListView) findViewById(R.id.lv_news);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -112,16 +112,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    protected void onStop() {
-
-        if(!(Checker.getCount() > 0)) {
-            hashdata.clear();
-            queue.getCache().clear();
-        }
-        super.onStop();
-
-    }
 
     @Override
     public void onBackPressed() {
@@ -214,7 +204,6 @@ public class MainActivity extends AppCompatActivity
         }
         startActivity(intent);
 
-        initialrequest();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -235,9 +224,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onRestart() {
+
+
         super.onRestart();
         Links.clear();
-
         hashdata.clear();
         initialrequest();
 
@@ -247,7 +237,6 @@ public class MainActivity extends AppCompatActivity
 
     void initialrequest() {
 
-        Checker.increment();
 
         final StringRequest firstReq = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
             @Override
@@ -403,6 +392,7 @@ public class MainActivity extends AppCompatActivity
 
             hashdata.clear();
             queue.getCache().clear();
+            progress.show();
             initialrequest();
 
             mSwipeRefreshLayout.setRefreshing(false);
