@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.support.v4.app.NavUtils;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Cache;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -33,8 +35,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Stack;
 
-public class Notices extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class Notices extends AppCompatActivity implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
+    SwipeRefreshLayout mSwipeRefreshLayout;
     ConnectionDetector connectionDetector;
     Downloader downloader;
     ArrayList<String> Links;
@@ -66,68 +69,28 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
         errorDialogMessage = new ErrorDialogMessage(this);
 
 
-        if(!connectionDetector.isConnectingToInternet()){
+        if (!connectionDetector.isConnectingToInternet()) {
 
 
             errorDialogMessage.show();
         }
 
-
         progress = new Progress(this);
         progress.show();
 
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        downloader = new Downloader(this);
+        downloader = Downloader.getInstance();
         registerReceiver(downloader, filter);
         hashdata = new Stack<LinkedHashMap<String, String>>();
         queue = VolleySingleton.getInstance().getRequestQueue();
         list = (ListView) findViewById(R.id.lv_notices);
+        queue.getCache().clear();
+        firstRequest();
 
-        final StringRequest firstReq = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                Document d = Jsoup.parse(response);
-                Elements links = d.select("div.item-page");
-
-                Links = new ArrayList<String>();
-
-                Elements downloadLink = links.select("a[href^=/files]");
-
-                data = new LinkedHashMap<String, String>();
-
-                for (Element temp : downloadLink) {
-
-
-                    String tempText = temp.text();
-                    if (tempText.length() > 0) {
-                        Links.add(temp.text());
-                        data.put(temp.text(), temp.attr("abs:href"));
-                    }
-                }
-
-
-                hashdata.push(data);
-
-                adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_list_item_1, Links);
-                list.setAdapter(adapter);
-                progress.stop();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError e) {
-
-                progress.stop();
-                errorDialogMessage.show();
-
-
-            }
-        });
-
-        firstReq.setTag("Notices");
-
-        queue.add(firstReq);
         list.setOnItemClickListener(this);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.rl_notices);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.progress_color_1, R.color.progress_color_3, R.color.progress_color_4, R.color.progress_color_5);
 
 
 
@@ -170,7 +133,6 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 
-
         TextView tv = (TextView) view;
 
         String s = tv.getText().toString();
@@ -188,7 +150,7 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
             int pointer1 = pointer - 1;
             int pointer2 = pointer1 - 1;
 
-            if(connectionDetector.isConnectingToInternet()){
+            if (connectionDetector.isConnectingToInternet()) {
                 if (link.charAt(pointer) == 'f' && link.charAt(pointer1) == 'd' && link.charAt(pointer2) == 'p') {
 
                     if (!downloader.download(link)) {
@@ -208,14 +170,84 @@ public class Notices extends AppCompatActivity implements AdapterView.OnItemClic
                     openBrowser.setData(Uri.parse(link));
                     startActivity(openBrowser);
                 }
-            }else{
+            } else {
                 errorDialogMessage.show();
             }
 
         }
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        NavUtils.navigateUpFromSameTask(this);
+
+    }
+
+    @Override
+    public void onRefresh() {
 
 
+        queue.getCache().clear();
+        progress.show();
+        hashdata.clear();
+        firstRequest();
+        mSwipeRefreshLayout.setRefreshing(false);
+
+
+    }
+
+    void firstRequest(){
+
+
+        Checker.increment();
+
+        final StringRequest firstReq = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Document d = Jsoup.parse(response);
+                Elements links = d.select("div.item-page");
+
+                Links = new ArrayList<String>();
+
+                Elements downloadLink = links.select("a[href^=/files]");
+
+                data = new LinkedHashMap<String, String>();
+
+                for (Element temp : downloadLink) {
+
+
+                    String tempText = temp.text();
+                    if (tempText.length() > 0) {
+                        Links.add(temp.text());
+                        data.put(temp.text(), temp.attr("abs:href"));
+                    }
+                }
+
+
+                hashdata.push(data);
+
+                adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_list_item_1, Links);
+                list.setAdapter(adapter);
+                progress.stop();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError e) {
+
+                progress.stop();
+                errorDialogMessage.show();
+
+
+            }
+        });
+
+        firstReq.setTag("Notices");
+
+        queue.add(firstReq);
     }
 }

@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -46,7 +47,6 @@ public class MainActivity extends AppCompatActivity
 
 
     /*News Activity*/
-
     ConnectionDetector connectionDetector;
     Downloader downloader;
     ArrayList<String> Links;
@@ -71,6 +71,10 @@ public class MainActivity extends AppCompatActivity
         connectionDetector = new ConnectionDetector(this);
         errorDialogMessage = new ErrorDialogMessage(this);
 
+        hashdata = new Stack<LinkedHashMap<String, String>>();
+        queue = VolleySingleton.getInstance().getRequestQueue();
+        list = (ListView) findViewById(R.id.lv_news);
+
 
         if (!connectionDetector.isConnectingToInternet()) {
 
@@ -78,19 +82,15 @@ public class MainActivity extends AppCompatActivity
             errorDialogMessage.show();
         }
 
-
         progress = new Progress(this);
         progress.show();
 
 
         IntentFilter filter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        downloader = new Downloader(this);
+        downloader = Downloader.getInstance();
         registerReceiver(downloader, filter);
-
-        hashdata = new Stack<LinkedHashMap<String, String>>();
-        queue = VolleySingleton.getInstance().getRequestQueue();
-        list = (ListView) findViewById(R.id.lv_news);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -108,28 +108,10 @@ public class MainActivity extends AppCompatActivity
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.rl_news);
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
-
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.progress_color_1, R.color.progress_color_3, R.color.progress_color_4, R.color.progress_color_5);
 
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        if (queue != null) {
-
-            queue.cancelAll("News");
-        }
-
-        if (hashdata.size() > 1) {
-
-            while (hashdata.size() != 1) {
-                hashdata.pop();
-            }
-
-
-        }
-    }
 
     @Override
     public void onBackPressed() {
@@ -185,28 +167,43 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+
         int id = item.getItemId();
 
         Intent intent = null;
 
         if (id == R.id.nav_login) {
 
-            intent = new Intent(MainActivity.this,Login.class);
+            intent = new Intent(MainActivity.this, Login.class);
         } else if (id == R.id.nav_notices) {
 
             intent = new Intent(MainActivity.this, Notices.class);
-        }
-        else if (id == R.id.nav_time_table) {
+        } else if (id == R.id.nav_time_table) {
 
             intent = new Intent(MainActivity.this, TimeTable.class);
+
+        } else if (id == R.id.nav_courses) {
+
+            intent = new Intent(MainActivity.this, Courses.class);
 
         } else if (id == R.id.nav_aboutus) {
 
             intent = new Intent(MainActivity.this, AboutUs.class);
+        } else if (id == R.id.nav_devs) {
+
+            intent = new Intent(MainActivity.this, Devs.class);
+
+        } else if (id == R.id.nav_visit_website) {
+
+            intent = new Intent(MainActivity.this, VisitWebsite.class);
+
+        } else if (id == R.id.nav_cloud) {
+
+            intent = new Intent(MainActivity.this, Cloud.class);
+
         }
         startActivity(intent);
 
-        initialrequest();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -227,9 +224,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onRestart() {
+
+
         super.onRestart();
         Links.clear();
-
         hashdata.clear();
         initialrequest();
 
@@ -393,7 +391,10 @@ public class MainActivity extends AppCompatActivity
         if (hashdata != null) {
 
             hashdata.clear();
+            queue.getCache().clear();
+            progress.show();
             initialrequest();
+
             mSwipeRefreshLayout.setRefreshing(false);
         } else {
 
